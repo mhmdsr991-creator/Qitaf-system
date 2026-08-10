@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قطاف | القطفة الأولى لك</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kraft: #EFE4CC;
+    --kraft-dark: #E2D3B0;
+    --card: #FBF6E9;
+    --ink: #2B2117;
+    --ink-soft: #5C4E3D;
+    --gold: #D9A441;
+    --gold-deep: #B9812A;
+    --olive: #6E7B4E;
+    --olive-dark: #545F3B;
+    --whatsapp: #25D366;
+    --whatsapp-deep: #1DA851;
+    --line: rgba(43,33,23,0.14);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    font-family:'Tajawal', sans-serif;
+    background:
+      radial-gradient(ellipse at top left, rgba(217,164,65,0.08), transparent 55%),
+      var(--kraft);
+    color: var(--ink);
+    min-height:100vh;
+    padding-bottom: 110px;
+  }
+
+  /* subtle paper texture */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(rgba(43,33,23,0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  header{
+    position:relative;
+    z-index:1;
+    padding: 28px 20px 22px;
+    text-align:center;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,0.25), transparent);
+  }
+
+  .logo-word{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size: clamp(2.6rem, 9vw, 3.6rem);
+    color: var(--gold-deep);
+    line-height:1;
+    letter-spacing: -1px;
+  }
+
+  .logo-tagline{
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size: 0.95rem;
+    color: var(--ink);
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .logo-divider{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-top:14px;
+  }
+  .logo-divider span{
+    width:60px; height:1px;
+    background: var(--gold);
+    opacity:0.55;
+  }
+  .logo-divider svg{width:16px; height:16px; fill: var(--olive);}
+
+  .hero-line{
+    max-width: 480px;
+    margin: 18px auto 0;
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    line-height:1.7;
+  }
+
+  .date-row{
+    margin-top:14px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  .date-row b{color:var(--gold-deep);}
+
+  main{
+    position:relative;
+    z-index:1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 22px 16px 0;
+  }
+
+  .section-title{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size:1.35rem;
+    color: var(--ink);
+    margin: 18px 4px 14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .section-title::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background: var(--line);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    position:relative;
+  }
+  .card.in-cart{
+    border-color: var(--gold);
+    box-shadow: 0 4px 18px rgba(217,164,65,0.18);
+  }
+
+  .card-emoji{
+    font-size: 2.4rem;
+    text-align:center;
+    background: var(--kraft-dark);
+    border-radius: 14px;
+    padding: 14px 0;
+    line-height:1;
+  }
+
+  .card-name{
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size: 1.02rem;
+    color: var(--ink);
+  }
+
+  .card-unit{
+    font-size:0.78rem;
+    color: var(--ink-soft);
+    margin-top:-6px;
+  }
+
+  .card-price{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size: 1.05rem;
+    color: var(--gold-deep);
+  }
+
+  .qty-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:2px;
+    background: var(--kraft);
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .qty-btn{
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    border:none;
+    background: var(--card);
+    color: var(--ink);
+    font-size: 1.15rem;
+    font-weight:700;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 1px 2px rgba(43,33,23,0.12);
+    transition: background 0.15s ease;
+  }
+  .qty-btn:active{ background: var(--gold); color:#fff; }
+
+  .qty-val{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size: 1.05rem;
+    min-width: 28px;
+    text-align:center;
+  }
+
+  .out-badge{
+    position:absolute; top:10px; left:10px;
+    background: var(--ink);
+    color: var(--kraft);
+    font-size:0.68rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight:700;
+  }
+
+  /* Sticky cart bar */
+  .cart-bar{
+    position: fixed;
+    bottom: 0; left:0; right:0;
+    z-index: 10;
+    background: var(--ink);
+    color: var(--kraft);
+    padding: 14px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 12px;
+    box-shadow: 0 -6px 24px rgba(0,0,0,0.18);
+    transform: translateY(110%);
+    transition: transform 0.3s ease;
+  }
+  .cart-bar.show{ transform: translateY(0); }
+
+  .cart-bar .info{ font-family:'Cairo', sans-serif; }
+  .cart-bar .count{ font-size:0.78rem; opacity:0.75; }
+  .cart-bar .total{ font-size:1.15rem; font-weight:800; color: var(--gold); }
+
+  .cart-bar button{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    background: var(--gold);
+    color: var(--ink);
+    border:none;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    cursor:pointer;
+  }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0;
+    background: rgba(43,33,23,0.55);
+    z-index: 20;
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .overlay.show{ display:flex; }
+
+  .sheet{
+    background: var(--kraft);
+    width:100%;
+    max-width: 640px;
+    border-radius: 24px 24px 0 0;
+    padding: 22px 20px 26px;
+    max-height: 88vh;
+    overflow-y:auto;
+    animation: slideup 0.28s ease;
+  }
+  @keyframes slideup{ from{transform:translateY(40px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+
+  .sheet h2{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+  .sheet .sub{ color: var(--ink-soft); font-size:0.85rem; margin-bottom:16px; }
+
+  .order-list{
+    background: var(--card);
+    border-radius: 14px;
+    padding: 6px 14px;
+    margin-bottom: 18px;
+  }
+  .order-row{
+    display:flex; justify-content:space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size:0.92rem;
+  }
+  .order-row:last-child{ border-bottom:none; }
+  .order-row .name{ font-weight:600; }
+  .order-row .sub-total{ font-family:'Cairo', sans-serif; font-weight:700; color: var(--gold-deep); }
+
+  .order-total-row{
+    display:flex; justify-content:space-between;
+    padding-top: 10px;
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size: 1.05rem;
+  }
+
+  .field{ margin-bottom: 14px; }
+  .field label{
+    display:block;
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size: 0.88rem;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .field input, .field textarea{
+    width:100%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family:'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+  .field textarea{ resize: vertical; min-height: 64px; }
+  .field input:focus, .field textarea:focus{
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+  }
+
+  .pay-options{
+    display:flex;
+    gap: 10px;
+  }
+  .pay-option{
+    flex:1;
+    border: 1px solid var(--line);
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 10px;
+    text-align:center;
+    cursor:pointer;
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size: 0.88rem;
+    transition: all 0.15s ease;
+  }
+  .pay-option.active{
+    border-color: var(--gold);
+    background: rgba(217,164,65,0.14);
+    color: var(--gold-deep);
+  }
+
+  .send-btn{
+    width:100%;
+    margin-top: 8px;
+    background: var(--whatsapp);
+    color:#fff;
+    border:none;
+    padding: 15px;
+    border-radius: 14px;
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size: 1rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+    transition: background 0.15s ease;
+  }
+  .send-btn:hover{ background: var(--whatsapp-deep); }
+  .send-btn:disabled{
+    background: #B9B29C;
+    cursor:not-allowed;
+  }
+
+  .close-sheet{
+    position:absolute;
+    top:16px; left:16px;
+    background: var(--card);
+    border:none;
+    width:34px; height:34px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor:pointer;
+    color: var(--ink);
+  }
+
+  .sheet-wrap{ position:relative; }
+
+  footer{
+    position:relative; z-index:1;
+    text-align:center;
+    padding: 30px 20px 20px;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+  }
+
+  .empty-hint{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size:0.85rem;
+    padding: 6px 0 2px;
+  }
+
+  @media (min-width:520px){
+    .grid{ grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-word">قطاف</div>
+  <div class="logo-tagline">القطفة الأولى لك</div>
+  <div class="logo-divider">
+    <span></span>
+    <svg viewBox="0 0 24 24"><path d="M12 2C7 2 4 6 4 10c0 5 4 9 8 12 4-3 8-7 8-12 0-4-3-8-8-8zm0 4c2.2 0 4 1.8 4 4 0 2.5-2 5-4 6.5C10 15 8 12.5 8 10c0-2.2 1.8-4 4-4z"/></svg>
+    <span></span>
+  </div>
+  <p class="hero-line">اخترنالك أطزج خضار وفاكهة النهارده، وهنوصّلهالك بكيس ورق طبيعي من غير بلاستيك خالص.</p>
+  <div class="date-row">طلبات <b id="today-date"></b></div>
+</header>
+
+<main>
+  <div class="section-title">اختار من القطفة</div>
+  <div class="grid" id="product-grid"></div>
+  <p class="empty-hint">الأسعار للكيلو إلا لو مكتوب غير كده — بتتحدث يوميًا حسب السوق</p>
+</main>
+
+<div class="cart-bar" id="cartBar">
+  <div class="info">
+    <div class="count" id="cartCount">0 صنف</div>
+    <div class="total" id="cartTotal">0 جنيه</div>
+  </div>
+  <button id="openCheckout">أكمل الطلب</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <div class="sheet-wrap">
+      <button class="close-sheet" id="closeSheet">✕</button>
+      <h2>طلبك جاهز؟</h2>
+      <p class="sub">راجع الطلب واملأ بياناتك، وهيتفتحلك واتساب برسالة جاهزة تبعتهالنا.</p>
+
+      <div class="order-list" id="orderList"></div>
+
+      <div class="field">
+        <label for="custName">الاسم</label>
+        <input type="text" id="custName" placeholder="اسمك بالكامل">
+      </div>
+      <div class="field">
+        <label for="custPhone">رقم الموبايل</label>
+        <input type="tel" id="custPhone" placeholder="01xxxxxxxxx">
+      </div>
+      <div class="field">
+        <label for="custAddress">العنوان بالتفصيل</label>
+        <textarea id="custAddress" placeholder="الحي، الشارع، رقم العمارة والدور..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>طريقة الدفع</label>
+        <div class="pay-options">
+          <div class="pay-option active" data-pay="كاش عند الاستلام">كاش عند الاستلام</div>
+          <div class="pay-option" data-pay="تحويل / فودافون كاش">تحويل / فودافون كاش</div>
+        </div>
+      </div>
+
+      <button class="send-btn" id="sendOrder" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.82L2 22l5.4-1.36c1.37.72 2.94 1.13 4.6 1.13h.02c5.46 0 9.9-4.45 9.9-9.91C21.93 6.45 17.5 2 12.04 2zm5.6 14.14c-.24.66-1.38 1.29-1.9 1.36-.49.07-1.05.1-1.7-.1-.39-.12-.89-.29-1.53-.56-2.7-1.16-4.46-3.87-4.6-4.05-.13-.18-1.1-1.47-1.1-2.8s.7-1.98.95-2.25c.24-.27.53-.34.71-.34h.5c.16 0 .38-.06.6.45.24.57.79 1.98.86 2.12.07.14.11.31.02.5-.09.18-.14.3-.27.46-.14.16-.29.35-.41.47-.14.14-.28.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.27.14.43.11.6-.07.16-.18.68-.79.86-1.06.18-.27.36-.22.6-.13.24.09 1.55.73 1.82.86.27.14.45.2.51.32.07.11.07.66-.17 1.32z"/></svg>
+        <span>ابعت الطلب على واتساب</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer>قطاف &middot; القطفة الأولى لك &middot; كل يوم اختيار جديد</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  // ====== بيانات Firebase بتاعة قطاف ======
+  const firebaseConfig = {
+    apiKey: "AIzaSyBT2PiOR05uJkiNB2GgNiy7X8hfOjHaoUA",
+    authDomain: "qitaf-orders.firebaseapp.com",
+    databaseURL: "https://qitaf-orders-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "qitaf-orders",
+    storageBucket: "qitaf-orders.firebasestorage.app",
+    messagingSenderId: "705411886211",
+    appId: "1:705411886211:web:37cacf678fa03ceb867fb6",
+  };
+  // ==========================================
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  function generateOrderId(){
+    const now = new Date();
+    const stamp = now.getFullYear().toString().slice(2) +
+                  (now.getMonth()+1).toString().padStart(2,'0') +
+                  now.getDate().toString().padStart(2,'0');
+    const rand = Math.floor(Math.random() * 900 + 100); // 3 digits
+    return `Q${stamp}${rand}`;
+  }
+
+  // ====== إعدادات قابلة للتعديل ======
+  const WHATSAPP_NUMBER = "201030806246"; // بصيغة دولية بدون + أو صفر البداية
+
+  const PRODUCTS = [
+    { id:'tom',  name:'طماطم',      unit:'كيلو', price:25, emoji:'🍅', available:true },
+    { id:'cuc',  name:'خيار',       unit:'كيلو', price:20, emoji:'🥒', available:true },
+    { id:'car',  name:'جزر',        unit:'كيلو', price:18, emoji:'🥕', available:true },
+    { id:'let',  name:'خس',         unit:'حبة',  price:12, emoji:'🥬', available:true },
+    { id:'ora',  name:'برتقال',     unit:'كيلو', price:22, emoji:'🍊', available:true },
+    { id:'ban',  name:'موز',        unit:'كيلو', price:35, emoji:'🍌', available:true },
+    { id:'pot',  name:'بطاطس',      unit:'كيلو', price:16, emoji:'🥔', available:true },
+    { id:'oni',  name:'بصل',        unit:'كيلو', price:14, emoji:'🧅', available:true },
+    { id:'pep',  name:'فلفل ألوان', unit:'كيلو', price:30, emoji:'🫑', available:true },
+    { id:'gar',  name:'ثوم',        unit:'ربع كيلو', price:15, emoji:'🧄', available:true },
+    { id:'lem',  name:'ليمون',      unit:'كيلو', price:20, emoji:'🍋', available:false },
+    { id:'app',  name:'تفاح',       unit:'كيلو', price:45, emoji:'🍎', available:true },
+  ];
+  // ====================================
+
+  const cart = {}; // id -> qty
+  const grid = document.getElementById('product-grid');
+
+  function renderGrid(){
+    grid.innerHTML = '';
+    PRODUCTS.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = 'card-' + p.id;
+      card.innerHTML = `
+        ${!p.available ? '<div class="out-badge">مش متوفر النهارده</div>' : ''}
+        <div class="card-emoji">${p.emoji}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-unit">السعر لل${p.unit}</div>
+        <div class="card-price">${p.price} جنيه</div>
+        <div class="qty-row">
+          <button class="qty-btn" data-action="minus" data-id="${p.id}" ${!p.available ? 'disabled' : ''}>−</button>
+          <span class="qty-val" id="qty-${p.id}">0</span>
+          <button class="qty-btn" data-action="plus" data-id="${p.id}" ${!p.available ? 'disabled' : ''}>+</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function changeQty(id, delta){
+    const current = cart[id] || 0;
+    const next = Math.max(0, current + delta);
+    if(next === 0){ delete cart[id]; } else { cart[id] = next; }
+    document.getElementById('qty-' + id).textContent = next;
+    document.getElementById('card-' + id).classList.toggle('in-cart', next > 0);
+    updateCartBar();
+  }
+
+  grid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.qty-btn');
+    if(!btn || btn.disabled) return;
+    const id = btn.dataset.id;
+    const delta = btn.dataset.action === 'plus' ? 1 : -1;
+    changeQty(id, delta);
+  });
+
+  function cartItems(){
+    return Object.entries(cart).map(([id, qty]) => {
+      const p = PRODUCTS.find(x => x.id === id);
+      return { ...p, qty, subtotal: p.price * qty };
+    });
+  }
+
+  function cartTotal(){
+    return cartItems().reduce((sum, i) => sum + i.subtotal, 0);
+  }
+
+  const cartBar = document.getElementById('cartBar');
+  const cartCount = document.getElementById('cartCount');
+  const cartTotalEl = document.getElementById('cartTotal');
+
+  function updateCartBar(){
+    const items = cartItems();
+    const total = cartTotal();
+    if(items.length === 0){
+      cartBar.classList.remove('show');
+      return;
+    }
+    cartBar.classList.add('show');
+    cartCount.textContent = items.length + (items.length === 1 ? ' صنف' : ' أصناف');
+    cartTotalEl.textContent = total + ' جنيه';
+  }
+
+  // Modal
+  const overlay = document.getElementById('overlay');
+  const orderList = document.getElementById('orderList');
+
+  function renderOrderList(){
+    const items = cartItems();
+    orderList.innerHTML = items.map(i => `
+      <div class="order-row">
+        <span class="name">${i.emoji} ${i.name} × ${i.qty} ${i.unit}</span>
+        <span class="sub-total">${i.subtotal} جنيه</span>
+      </div>
+    `).join('') + `
+      <div class="order-total-row">
+        <span>الإجمالي</span>
+        <span>${cartTotal()} جنيه</span>
+      </div>
+    `;
+  }
+
+  document.getElementById('openCheckout').addEventListener('click', () => {
+    renderOrderList();
+    overlay.classList.add('show');
+  });
+  document.getElementById('closeSheet').addEventListener('click', () => {
+    overlay.classList.remove('show');
+  });
+  overlay.addEventListener('click', (e) => {
+    if(e.target === overlay) overlay.classList.remove('show');
+  });
+
+  // Payment method selection
+  let payMethod = 'كاش عند الاستلام';
+  document.querySelectorAll('.pay-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.pay-option').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      payMethod = opt.dataset.pay;
+    });
+  });
+
+  // Enable send button only when fields filled
+  const nameInput = document.getElementById('custName');
+  const phoneInput = document.getElementById('custPhone');
+  const addressInput = document.getElementById('custAddress');
+  const sendBtn = document.getElementById('sendOrder');
+
+  function validateForm(){
+    const ok = nameInput.value.trim().length > 1 &&
+               phoneInput.value.trim().length >= 10 &&
+               addressInput.value.trim().length > 5;
+    sendBtn.disabled = !ok;
+  }
+  [nameInput, phoneInput, addressInput].forEach(el => el.addEventListener('input', validateForm));
+
+  sendBtn.addEventListener('click', () => {
+    const items = cartItems();
+    if(items.length === 0) return;
+
+    sendBtn.disabled = true;
+    sendBtn.querySelector('span').textContent = 'جاري إرسال الطلب...';
+
+    const orderId = generateOrderId();
+    const now = Date.now();
+    const customerName = nameInput.value.trim();
+    const customerPhone = phoneInput.value.trim();
+    const address = addressInput.value.trim();
+
+    // تسجيل الطلب في نظام التتبع (Firebase) - يبدأ عداد التحضير فورًا
+    set(ref(db, 'orders/' + orderId), {
+      customerName: customerName,
+      customerPhone: customerPhone,
+      address: address,
+      stage: 'preparing',
+      createdAt: now,
+      stageStarts: { preparing: now },
+      items: items.map(i => ({ name: i.name, qty: i.qty, unit: i.unit, subtotal: i.subtotal })),
+      total: cartTotal(),
+      paymentMethod: payMethod
+    }).then(() => {
+      let msg = `طلب جديد من قطاف 🌿\n\n`;
+      msg += `رقم الطلب: ${orderId}\n`;
+      msg += `الاسم: ${customerName}\n`;
+      msg += `الموبايل: ${customerPhone}\n`;
+      msg += `العنوان: ${address}\n\n`;
+      msg += `الأصناف:\n`;
+      items.forEach(i => {
+        msg += `- ${i.name} × ${i.qty} ${i.unit} = ${i.subtotal} جنيه\n`;
+      });
+      msg += `\nالإجمالي: ${cartTotal()} جنيه\n`;
+      msg += `طريقة الدفع: ${payMethod}`;
+
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+
+      sendBtn.disabled = false;
+      sendBtn.querySelector('span').textContent = 'ابعت الطلب على واتساب';
+    }).catch(() => {
+      alert('حصلت مشكلة في إرسال الطلب، حاول تاني.');
+      sendBtn.disabled = false;
+      sendBtn.querySelector('span').textContent = 'ابعت الطلب على واتساب';
+    });
+  });
+
+  // Date display
+  const dateEl = document.getElementById('today-date');
+  const today = new Date();
+  const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  dateEl.textContent = days[today.getDay()] + ' ' + today.getDate() + '/' + (today.getMonth()+1);
+
+  renderGrid();
+</script>
+
+</body>
+</html>

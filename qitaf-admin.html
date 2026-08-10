@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم | قطاف</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kraft: #EFE4CC; --card: #FBF6E9; --ink: #2B2117; --ink-soft: #5C4E3D;
+    --gold: #D9A441; --gold-deep: #B9812A; --olive: #6E7B4E; --red: #C05A3E;
+    --line: rgba(43,33,23,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Tajawal', sans-serif; background: var(--kraft); color: var(--ink); min-height:100vh; padding: 18px 14px 60px; }
+  .wrap{ max-width: 620px; margin:0 auto; }
+  h1{ font-family:'Cairo', sans-serif; font-weight:900; font-size:1.4rem; color: var(--gold-deep); text-align:center; margin-bottom: 4px; }
+  .sub{ text-align:center; color: var(--ink-soft); font-size:0.82rem; margin-bottom: 20px; }
+
+  .pin-box{ max-width: 340px; margin: 60px auto; background: var(--card); border-radius:18px; padding:24px; text-align:center; }
+  .pin-box input{ width:100%; text-align:center; font-size:1.4rem; letter-spacing:6px; border:1px solid var(--line); border-radius:12px; padding:12px; margin:14px 0; }
+  .pin-box button{ width:100%; background: var(--gold-deep); color:#fff; border:none; padding:13px; border-radius:12px; font-family:'Cairo',sans-serif; font-weight:700; font-size:1rem; }
+
+  .card{ background: var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:16px; }
+  .card h2{ font-family:'Cairo', sans-serif; font-weight:800; font-size:1.05rem; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+
+  label{ display:block; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.82rem; margin: 8px 0 4px; }
+  input[type=text], input[type=number], select, textarea{
+    width:100%; border:1px solid var(--line); background:#fff; border-radius:10px; padding:9px 11px;
+    font-family:'Tajawal',sans-serif; font-size:0.9rem;
+  }
+  .row2{ display:flex; gap:8px; }
+  .row2 > *{ flex:1; }
+
+  .variant-row{ display:flex; gap:6px; align-items:center; margin-top:6px; }
+  .variant-row input{ flex:1; }
+  .variant-row .rm{ background: var(--red); color:#fff; border:none; border-radius:8px; width:34px; height:34px; font-weight:700; cursor:pointer; flex:none; }
+  .add-variant{ margin-top:8px; background:transparent; border:1px dashed var(--gold); color: var(--gold-deep); border-radius:10px; padding:8px; width:100%; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; }
+
+  .btn{ font-family:'Cairo',sans-serif; font-weight:800; border:none; border-radius:10px; padding:11px; font-size:0.9rem; cursor:pointer; width:100%; margin-top:12px; }
+  .btn-primary{ background: var(--olive); color:#fff; }
+  .btn-secondary{ background: var(--gold); color:#fff; }
+  .btn-danger{ background: transparent; color: var(--red); border:1px solid var(--red); }
+
+  .product-item{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .product-top{ display:flex; justify-content:space-between; align-items:center; }
+  .product-name{ font-family:'Cairo',sans-serif; font-weight:800; font-size:0.98rem; }
+  .product-cat{ font-size:0.72rem; color: var(--ink-soft); background: var(--kraft); padding:2px 9px; border-radius:10px; }
+  .variant-tag{ display:inline-block; background: var(--kraft); border-radius:8px; padding:3px 9px; font-size:0.78rem; margin:4px 4px 0 0; }
+  .item-actions{ display:flex; gap:8px; margin-top:8px; }
+  .item-actions button{ flex:1; font-size:0.8rem; padding:7px; border-radius:8px; border:none; font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer; }
+  .edit-btn{ background: var(--kraft); color: var(--ink); }
+  .del-btn{ background: var(--red); color:#fff; }
+  .unavailable{ opacity:0.5; }
+
+  .toggle-row{ display:flex; align-items:center; gap:10px; margin: 8px 0; }
+  .msg{ font-size:0.82rem; color: var(--olive); margin-top:8px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>قطاف · لوحة التحكم</h1>
+  <p class="sub">إدارة الأصناف والأسعار والخصومات</p>
+
+  <div class="pin-box" id="pinBox">
+    <label>كلمة سر المدير</label>
+    <input type="password" id="pinInput" placeholder="••••">
+    <button id="pinBtn">دخول</button>
+  </div>
+
+  <div id="adminPanel" style="display:none;">
+
+    <div class="card">
+      <h2>🖼️ صورة صفحة الطلب</h2>
+      <p style="font-size:0.82rem; color:var(--ink-soft); margin-bottom:10px;">حط رابط مباشر لصورة (من Google Drive، Imgur، أو أي مكان تاني) هتظهر في أعلى صفحة الطلب.</p>
+      <label>رابط الصورة</label>
+      <input type="text" id="bannerImageUrl" placeholder="https://...">
+      <button class="btn btn-primary" id="saveBannerImage">حفظ الصورة</button>
+      <button class="btn btn-danger" id="removeBannerImage">إزالة الصورة</button>
+      <div class="msg" id="bannerImageMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>🏷️ شريط الخصم</h2>
+      <div class="toggle-row">
+        <input type="checkbox" id="discountEnabled" style="width:20px;height:20px;">
+        <label style="margin:0;">تفعيل شريط الخصم</label>
+      </div>
+      <label>نسبة الخصم %</label>
+      <input type="number" id="discountPercent" placeholder="مثال: 20">
+      <label>نص العرض (اختياري)</label>
+      <input type="text" id="discountText" placeholder="مثال: خصم اليوم على الفاكهة">
+      <button class="btn btn-primary" id="saveDiscount">حفظ إعدادات الخصم</button>
+      <div class="msg" id="discountMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>➕ إضافة / تعديل صنف</h2>
+      <input type="hidden" id="editingId">
+      <label>اسم الصنف</label>
+      <input type="text" id="pName" placeholder="مثال: طماطم">
+      <div class="row2">
+        <div>
+          <label>الإيموجي</label>
+          <input type="text" id="pEmoji" placeholder="🍅">
+        </div>
+        <div>
+          <label>التصنيف</label>
+          <select id="pCategory">
+            <option value="vegetable">خضار</option>
+            <option value="fruit">فاكهة</option>
+          </select>
+        </div>
+      </div>
+
+      <label>الأوزان والأسعار</label>
+      <div id="variantsList"></div>
+      <button class="add-variant" id="addVariantBtn">+ إضافة وزن جديد</button>
+
+      <button class="btn btn-primary" id="saveProductBtn">حفظ الصنف</button>
+      <button class="btn btn-danger" id="cancelEditBtn" style="display:none;">إلغاء التعديل</button>
+      <div class="msg" id="productMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>📦 قائمة الأصناف الافتراضية</h2>
+      <p style="font-size:0.82rem; color:var(--ink-soft); margin-bottom:10px;">استيراد أكتر من 40 صنف شائع (فاكهة وخضار) بأوزان جاهزة - هتقدر تعدّل الأسعار بعدها.</p>
+      <button class="btn btn-secondary" id="importDefaultsBtn">استيراد القائمة الافتراضية</button>
+      <div class="msg" id="importMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>🗂️ الأصناف الحالية</h2>
+      <div id="productsList"><p class="msg">جاري التحميل...</p></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, onValue, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBT2PiOR05uJkiNB2GgNiy7X8hfOjHaoUA",
+    authDomain: "qitaf-orders.firebaseapp.com",
+    databaseURL: "https://qitaf-orders-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "qitaf-orders",
+    storageBucket: "qitaf-orders.firebasestorage.app",
+    messagingSenderId: "705411886211",
+    appId: "1:705411886211:web:37cacf678fa03ceb867fb6",
+  };
+  const MANAGER_PIN = "1234"; // نفس كلمة سر staff — غيّرها هنا وهناك معًا
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  document.getElementById('pinBtn').addEventListener('click', () => {
+    if(document.getElementById('pinInput').value === MANAGER_PIN){
+      document.getElementById('pinBox').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      initPanel();
+    } else {
+      alert('كلمة السر غلط');
+    }
+  });
+
+  let variantCounter = 0;
+  function addVariantRow(label='', price=''){
+    variantCounter++;
+    const id = 'var' + variantCounter;
+    const div = document.createElement('div');
+    div.className = 'variant-row';
+    div.dataset.vid = id;
+    div.innerHTML = `
+      <input type="text" placeholder="الوحدة (كيلو، نص كيلو، ربطة...)" class="v-label" value="${label}">
+      <input type="number" placeholder="السعر" class="v-price" value="${price}" style="max-width:90px;">
+      <button type="button" class="rm">✕</button>
+    `;
+    div.querySelector('.rm').addEventListener('click', () => div.remove());
+    document.getElementById('variantsList').appendChild(div);
+  }
+
+  document.getElementById('addVariantBtn').addEventListener('click', () => addVariantRow());
+
+  function resetForm(){
+    document.getElementById('editingId').value = '';
+    document.getElementById('pName').value = '';
+    document.getElementById('pEmoji').value = '';
+    document.getElementById('pCategory').value = 'vegetable';
+    document.getElementById('variantsList').innerHTML = '';
+    document.getElementById('cancelEditBtn').style.display = 'none';
+    addVariantRow('كيلو', '');
+  }
+
+  document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
+
+  document.getElementById('saveProductBtn').addEventListener('click', () => {
+    const name = document.getElementById('pName').value.trim();
+    const emoji = document.getElementById('pEmoji').value.trim() || '🥬';
+    const category = document.getElementById('pCategory').value;
+    const editingId = document.getElementById('editingId').value;
+
+    const variants = {};
+    document.querySelectorAll('#variantsList .variant-row').forEach((row, i) => {
+      const label = row.querySelector('.v-label').value.trim();
+      const price = parseFloat(row.querySelector('.v-price').value);
+      if(label && !isNaN(price)){
+        variants['v' + i] = { label, price };
+      }
+    });
+
+    if(!name || Object.keys(variants).length === 0){
+      alert('محتاج اسم الصنف ووزن واحد بسعره على الأقل');
+      return;
+    }
+
+    const productId = editingId || ('p_' + Date.now());
+    set(ref(db, 'products/' + productId), {
+      name, emoji, category, available: true, variants
+    }).then(() => {
+      document.getElementById('productMsg').textContent = 'تم الحفظ ✓';
+      setTimeout(() => document.getElementById('productMsg').textContent = '', 2000);
+      resetForm();
+    });
+  });
+
+  function editProduct(id, data){
+    document.getElementById('editingId').value = id;
+    document.getElementById('pName').value = data.name;
+    document.getElementById('pEmoji').value = data.emoji;
+    document.getElementById('pCategory').value = data.category;
+    document.getElementById('variantsList').innerHTML = '';
+    Object.values(data.variants || {}).forEach(v => addVariantRow(v.label, v.price));
+    document.getElementById('cancelEditBtn').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function deleteProduct(id){
+    if(confirm('متأكد من حذف الصنف؟')){
+      remove(ref(db, 'products/' + id));
+    }
+  }
+
+  function toggleAvailable(id, current){
+    update(ref(db, 'products/' + id), { available: !current });
+  }
+
+  function renderProducts(products){
+    const list = document.getElementById('productsList');
+    const entries = Object.entries(products || {});
+    if(entries.length === 0){
+      list.innerHTML = '<p class="msg">مفيش أصناف لسه، ضيف واحد أو استورد القائمة الافتراضية</p>';
+      return;
+    }
+    list.innerHTML = entries.map(([id, p]) => `
+      <div class="product-item ${!p.available ? 'unavailable' : ''}">
+        <div class="product-top">
+          <div class="product-name">${p.emoji} ${p.name}</div>
+          <span class="product-cat">${p.category === 'fruit' ? 'فاكهة' : 'خضار'}</span>
+        </div>
+        <div>
+          ${Object.values(p.variants || {}).map(v => `<span class="variant-tag">${v.label}: ${v.price} ج</span>`).join('')}
+        </div>
+        <div class="item-actions">
+          <button class="edit-btn" data-edit="${id}">تعديل</button>
+          <button class="edit-btn" data-toggle="${id}">${p.available ? 'إخفاء' : 'إظهار'}</button>
+          <button class="del-btn" data-del="${id}">حذف</button>
+        </div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => editProduct(b.dataset.edit, products[b.dataset.edit])));
+    list.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => deleteProduct(b.dataset.del)));
+    list.querySelectorAll('[data-toggle]').forEach(b => b.addEventListener('click', () => toggleAvailable(b.dataset.toggle, products[b.dataset.toggle].available)));
+  }
+
+  function initPanel(){
+    resetForm();
+
+    onValue(ref(db, 'products'), (snap) => renderProducts(snap.val()));
+
+    onValue(ref(db, 'settings/discount'), (snap) => {
+      const d = snap.val();
+      if(d){
+        document.getElementById('discountEnabled').checked = !!d.enabled;
+        document.getElementById('discountPercent').value = d.percent || '';
+        document.getElementById('discountText').value = d.text || '';
+      }
+    });
+
+    onValue(ref(db, 'settings/bannerImage'), (snap) => {
+      document.getElementById('bannerImageUrl').value = snap.val() || '';
+    });
+
+    document.getElementById('saveBannerImage').addEventListener('click', () => {
+      const url = document.getElementById('bannerImageUrl').value.trim();
+      if(!url){ alert('حط رابط الصورة الأول'); return; }
+      set(ref(db, 'settings/bannerImage'), url).then(() => {
+        document.getElementById('bannerImageMsg').textContent = 'تم الحفظ ✓';
+        setTimeout(() => document.getElementById('bannerImageMsg').textContent = '', 2000);
+      });
+    });
+
+    document.getElementById('removeBannerImage').addEventListener('click', () => {
+      set(ref(db, 'settings/bannerImage'), null).then(() => {
+        document.getElementById('bannerImageUrl').value = '';
+        document.getElementById('bannerImageMsg').textContent = 'تم إزالة الصورة';
+        setTimeout(() => document.getElementById('bannerImageMsg').textContent = '', 2000);
+      });
+    });
+
+    document.getElementById('saveDiscount').addEventListener('click', () => {
+      set(ref(db, 'settings/discount'), {
+        enabled: document.getElementById('discountEnabled').checked,
+        percent: parseFloat(document.getElementById('discountPercent').value) || 0,
+        text: document.getElementById('discountText').value.trim()
+      }).then(() => {
+        document.getElementById('discountMsg').textContent = 'تم الحفظ ✓';
+        setTimeout(() => document.getElementById('discountMsg').textContent = '', 2000);
+      });
+    });
+
+    document.getElementById('importDefaultsBtn').addEventListener('click', () => {
+      if(!confirm('هيتم إضافة/استبدال القائمة الافتراضية. متأكد؟')) return;
+      const updates = {};
+      DEFAULT_CATALOG.forEach((p, i) => {
+        const variants = {};
+        p.variants.forEach((v, vi) => variants['v'+vi] = v);
+        updates['products/def_' + i] = { name: p.name, emoji: p.emoji, category: p.category, available: true, variants };
+      });
+      update(ref(db), updates).then(() => {
+        document.getElementById('importMsg').textContent = `تم استيراد ${DEFAULT_CATALOG.length} صنف ✓`;
+        setTimeout(() => document.getElementById('importMsg').textContent = '', 3000);
+      });
+    });
+  }
+
+  const DEFAULT_CATALOG = [
+    { name:'طماطم', emoji:'🍅', category:'vegetable', variants:[{label:'كيلو',price:25},{label:'نص كيلو',price:13}] },
+    { name:'خيار', emoji:'🥒', category:'vegetable', variants:[{label:'كيلو',price:20},{label:'نص كيلو',price:11}] },
+    { name:'جزر', emoji:'🥕', category:'vegetable', variants:[{label:'كيلو',price:18}] },
+    { name:'خس', emoji:'🥬', category:'vegetable', variants:[{label:'حبة',price:12}] },
+    { name:'كرنب', emoji:'🥬', category:'vegetable', variants:[{label:'حبة',price:15}] },
+    { name:'بطاطس', emoji:'🥔', category:'vegetable', variants:[{label:'كيلو',price:16},{label:'نص كيلو',price:9}] },
+    { name:'بصل', emoji:'🧅', category:'vegetable', variants:[{label:'كيلو',price:14}] },
+    { name:'ثوم', emoji:'🧄', category:'vegetable', variants:[{label:'ربع كيلو',price:15}] },
+    { name:'فلفل ألوان', emoji:'🫑', category:'vegetable', variants:[{label:'كيلو',price:30},{label:'نص كيلو',price:16}] },
+    { name:'فلفل حار', emoji:'🌶️', category:'vegetable', variants:[{label:'ربع كيلو',price:10}] },
+    { name:'باذنجان', emoji:'🍆', category:'vegetable', variants:[{label:'كيلو',price:17}] },
+    { name:'كوسة', emoji:'🥒', category:'vegetable', variants:[{label:'كيلو',price:19}] },
+    { name:'فاصوليا خضراء', emoji:'🫛', category:'vegetable', variants:[{label:'كيلو',price:28}] },
+    { name:'بامية', emoji:'🥬', category:'vegetable', variants:[{label:'كيلو',price:32}] },
+    { name:'ملوخية', emoji:'🌿', category:'vegetable', variants:[{label:'ربطة',price:10}] },
+    { name:'سبانخ', emoji:'🌿', category:'vegetable', variants:[{label:'ربطة',price:9}] },
+    { name:'بقدونس', emoji:'🌿', category:'vegetable', variants:[{label:'ربطة',price:3}] },
+    { name:'شبت', emoji:'🌿', category:'vegetable', variants:[{label:'ربطة',price:3}] },
+    { name:'كزبرة', emoji:'🌿', category:'vegetable', variants:[{label:'ربطة',price:3}] },
+    { name:'نعناع', emoji:'🌿', category:'vegetable', variants:[{label:'ربطة',price:3}] },
+    { name:'ليمون', emoji:'🍋', category:'vegetable', variants:[{label:'كيلو',price:20}] },
+    { name:'فجل', emoji:'🥕', category:'vegetable', variants:[{label:'ربطة',price:5}] },
+    { name:'ذرة', emoji:'🌽', category:'vegetable', variants:[{label:'حبة',price:6}] },
+    { name:'قرنبيط', emoji:'🥦', category:'vegetable', variants:[{label:'حبة',price:14}] },
+    { name:'بروكلي', emoji:'🥦', category:'vegetable', variants:[{label:'حبة',price:18}] },
+    { name:'موز', emoji:'🍌', category:'fruit', variants:[{label:'كيلو',price:35}] },
+    { name:'تفاح', emoji:'🍎', category:'fruit', variants:[{label:'كيلو',price:45}] },
+    { name:'برتقال', emoji:'🍊', category:'fruit', variants:[{label:'كيلو',price:22}] },
+    { name:'يوسفي', emoji:'🍊', category:'fruit', variants:[{label:'كيلو',price:24}] },
+    { name:'مانجو', emoji:'🥭', category:'fruit', variants:[{label:'كيلو',price:55}] },
+    { name:'عنب', emoji:'🍇', category:'fruit', variants:[{label:'كيلو',price:40}] },
+    { name:'فراولة', emoji:'🍓', category:'fruit', variants:[{label:'كيلو',price:35},{label:'نص كيلو',price:19}] },
+    { name:'بطيخ', emoji:'🍉', category:'fruit', variants:[{label:'حبة',price:45},{label:'نص حبة',price:25}] },
+    { name:'كانتالوب', emoji:'🍈', category:'fruit', variants:[{label:'حبة',price:20}] },
+    { name:'أناناس', emoji:'🍍', category:'fruit', variants:[{label:'حبة',price:35}] },
+    { name:'كيوي', emoji:'🥝', category:'fruit', variants:[{label:'كيلو',price:60}] },
+    { name:'رمان', emoji:'🍎', category:'fruit', variants:[{label:'كيلو',price:38}] },
+    { name:'مشمش', emoji:'🍑', category:'fruit', variants:[{label:'كيلو',price:30}] },
+    { name:'خوخ', emoji:'🍑', category:'fruit', variants:[{label:'كيلو',price:32}] },
+    { name:'كمثرى', emoji:'🍐', category:'fruit', variants:[{label:'كيلو',price:40}] },
+    { name:'جوافة', emoji:'🍈', category:'fruit', variants:[{label:'كيلو',price:25}] },
+    { name:'بلح', emoji:'🌴', category:'fruit', variants:[{label:'كيلو',price:30}] },
+    { name:'تين', emoji:'🍈', category:'fruit', variants:[{label:'كيلو',price:35}] },
+  ];
+</script>
+</body>
+</html>
