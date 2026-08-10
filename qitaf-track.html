@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تتبع طلبك | قطاف</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kraft: #EFE4CC;
+    --kraft-dark: #E2D3B0;
+    --card: #FBF6E9;
+    --ink: #2B2117;
+    --ink-soft: #5C4E3D;
+    --gold: #D9A441;
+    --gold-deep: #B9812A;
+    --olive: #6E7B4E;
+    --line: rgba(43,33,23,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Tajawal', sans-serif;
+    background: var(--kraft);
+    color: var(--ink);
+    min-height:100vh;
+    padding: 24px 16px 40px;
+  }
+  .wrap{ max-width: 480px; margin:0 auto; }
+
+  .logo-word{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size: 2rem;
+    color: var(--gold-deep);
+    text-align:center;
+  }
+  .logo-tagline{
+    text-align:center;
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-top:2px;
+    margin-bottom: 24px;
+  }
+
+  .order-id-box{
+    background: var(--card);
+    border:1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 16px;
+    text-align:center;
+    margin-bottom: 22px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  .order-id-box b{ color: var(--ink); font-family:'Cairo', sans-serif; }
+
+  .timer-card{
+    background: var(--ink);
+    color: var(--kraft);
+    border-radius: 22px;
+    padding: 28px 20px;
+    text-align:center;
+    margin-bottom: 26px;
+  }
+  .timer-label{ font-size: 0.85rem; opacity: 0.75; margin-bottom: 8px; }
+  .timer-value{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size: 2.6rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    direction: ltr;
+  }
+  .timer-note{ font-size: 0.8rem; margin-top: 8px; opacity: 0.7; }
+
+  .steps{
+    background: var(--card);
+    border-radius: 18px;
+    padding: 20px 18px;
+    border:1px solid var(--line);
+  }
+  .step{
+    display:flex;
+    align-items:flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    position:relative;
+  }
+  .step:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    right: 17px;
+    top: 40px;
+    bottom: -4px;
+    width: 2px;
+    background: var(--line);
+  }
+  .step.done:not(:last-child)::after{ background: var(--olive); }
+
+  .step-dot{
+    width: 36px; height:36px;
+    border-radius: 50%;
+    background: var(--kraft-dark);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 1.05rem;
+    flex-shrink:0;
+    z-index:1;
+    border: 2px solid var(--kraft-dark);
+  }
+  .step.done .step-dot{ background: var(--olive); border-color: var(--olive); color: #fff; }
+  .step.active .step-dot{
+    background: var(--gold); border-color: var(--gold); color: #fff;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(217,164,65,0.5); }
+    70%{ box-shadow: 0 0 0 10px rgba(217,164,65,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(217,164,65,0); }
+  }
+
+  .step-text{ padding-top: 6px; }
+  .step-title{ font-family:'Cairo', sans-serif; font-weight:700; font-size: 0.96rem; color: var(--ink-soft); }
+  .step.done .step-title, .step.active .step-title{ color: var(--ink); }
+
+  .contact-row{ margin-top: 22px; text-align:center; }
+  .contact-row a{
+    display:inline-flex; align-items:center; gap:8px;
+    background: #25D366; color:#fff; text-decoration:none;
+    padding: 12px 22px; border-radius: 14px;
+    font-family:'Cairo', sans-serif; font-weight:700; font-size: 0.9rem;
+  }
+
+  .status-msg{ text-align:center; color: var(--ink-soft); font-size: 0.85rem; padding: 40px 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo-word">قطاف</div>
+  <div class="logo-tagline">القطفة الأولى لك</div>
+
+  <div class="order-id-box">رقم الطلب: <b id="orderIdDisplay">—</b></div>
+  <div id="loadingMsg" class="status-msg">جاري تحميل بيانات الطلب...</div>
+
+  <div id="content" style="display:none;">
+    <div class="timer-card">
+      <div class="timer-label" id="timerLabel">متبقي على المرحلة الحالية</div>
+      <div class="timer-value" id="timerValue">--:--</div>
+      <div class="timer-note" id="timerNote"></div>
+    </div>
+
+    <div class="steps" id="stepsList">
+      <div class="step" data-step="preparing">
+        <div class="step-dot">1</div>
+        <div class="step-text"><div class="step-title">جاري تحضير طلبك</div></div>
+      </div>
+      <div class="step" data-step="packing">
+        <div class="step-dot">2</div>
+        <div class="step-text"><div class="step-title">جاري التجهيز والتغليف</div></div>
+      </div>
+      <div class="step" data-step="delivering">
+        <div class="step-dot">3</div>
+        <div class="step-text"><div class="step-title">الطلب في الطريق ليك</div></div>
+      </div>
+      <div class="step" data-step="delivered">
+        <div class="step-dot">✓</div>
+        <div class="step-text"><div class="step-title">وصل الطلب</div></div>
+      </div>
+    </div>
+
+    <div class="contact-row">
+      <a id="whatsappContact" href="#" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.82L2 22l5.4-1.36c1.37.72 2.94 1.13 4.6 1.13h.02c5.46 0 9.9-4.45 9.9-9.91C21.93 6.45 17.5 2 12.04 2zm5.6 14.14c-.24.66-1.38 1.29-1.9 1.36-.49.07-1.05.1-1.7-.1-.39-.12-.89-.29-1.53-.56-2.7-1.16-4.46-3.87-4.6-4.05-.13-.18-1.1-1.47-1.1-2.8s.7-1.98.95-2.25c.24-.27.53-.34.71-.34h.5c.16 0 .38-.06.6.45.24.57.79 1.98.86 2.12.07.14.11.31.02.5-.09.18-.14.3-.27.46-.14.16-.29.35-.41.47-.14.14-.28.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.27.14.43.11.6-.07.16-.18.68-.79.86-1.06.18-.27.36-.22.6-.13.24.09 1.55.73 1.82.86.27.14.45.2.51.32.07.11.07.66-.17 1.32z"/></svg>
+        <span>تواصل معانا</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  // ====== بيانات Firebase بتاعة قطاف ======
+  const firebaseConfig = {
+    apiKey: "AIzaSyBT2PiOR05uJkiNB2GgNiy7X8hfOjHaoUA",
+    authDomain: "qitaf-orders.firebaseapp.com",
+    databaseURL: "https://qitaf-orders-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "qitaf-orders",
+    storageBucket: "qitaf-orders.firebasestorage.app",
+    messagingSenderId: "705411886211",
+    appId: "1:705411886211:web:37cacf678fa03ceb867fb6",
+  };
+  // ==========================================
+
+  const WHATSAPP_NUMBER = "201030806246";
+  const STAGE_ORDER = ['preparing', 'packing', 'delivering', 'delivered'];
+  const STAGE_LABEL_NOTE = {
+    preparing: 'بنجهزلك أطزج اختيارات النهاردة',
+    packing: 'بنغلفهملك بعناية في كيس ورق طبيعي',
+    delivering: 'الطلب خرج ليك، هيوصل قريب',
+    delivered: ''
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('order');
+  document.getElementById('whatsappContact').href = `https://wa.me/${WHATSAPP_NUMBER}`;
+
+  let durations = { preparing: 6, packing: 4, delivering: 20 };
+  onValue(ref(db, 'settings'), (snap) => {
+    const d = snap.val();
+    if(d) durations = { preparing: d.preparing || 6, packing: d.packing || 4, delivering: d.delivering || 20 };
+  });
+
+  if(!orderId){
+    document.getElementById('loadingMsg').textContent = 'مفيش رقم طلب في اللينك ده. تأكد إنك فاتح اللينك اللي بعتناهولك.';
+  } else {
+    document.getElementById('orderIdDisplay').textContent = orderId;
+    let currentOrder = null;
+    let tickInterval = null;
+
+    onValue(ref(db, 'orders/' + orderId), (snapshot) => {
+      const data = snapshot.val();
+      if(!data){
+        document.getElementById('loadingMsg').textContent = 'مش لاقيين طلب بالرقم ده. تواصل معانا لو فيه مشكلة.';
+        return;
+      }
+      document.getElementById('loadingMsg').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+      currentOrder = data;
+      updateSteps(data.stage);
+      if(!tickInterval) tickInterval = setInterval(tick, 1000);
+      tick();
+    });
+
+    function updateSteps(currentStage){
+      const currentIndex = STAGE_ORDER.indexOf(currentStage);
+      STAGE_ORDER.forEach((step, i) => {
+        const el = document.querySelector(`.step[data-step="${step}"]`);
+        el.classList.remove('done', 'active');
+        if(i < currentIndex) el.classList.add('done');
+        else if(i === currentIndex) el.classList.add('active');
+      });
+    }
+
+    function tick(){
+      if(!currentOrder) return;
+      const stage = currentOrder.stage;
+      const timerValue = document.getElementById('timerValue');
+      const timerLabel = document.getElementById('timerLabel');
+      const timerNote = document.getElementById('timerNote');
+
+      if(stage === 'delivered'){
+        timerLabel.textContent = 'الطلب اتسلم';
+        timerValue.textContent = '✓';
+        timerNote.textContent = 'بالهنا والشفا 🌿';
+        if(tickInterval){ clearInterval(tickInterval); tickInterval = null; }
+        return;
+      }
+
+      const start = currentOrder.stageStarts ? currentOrder.stageStarts[stage] : null;
+      timerNote.textContent = STAGE_LABEL_NOTE[stage] || '';
+      if(!start){ timerValue.textContent = '--:--'; return; }
+
+      const durationMs = (durations[stage] || 5) * 60 * 1000;
+      const remaining = (start + durationMs) - Date.now();
+
+      if(remaining <= 0){
+        timerLabel.textContent = 'هنوصلك في أقرب وقت';
+        timerValue.textContent = 'دقايق قليلة';
+      } else {
+        timerLabel.textContent = 'متبقي تقريبًا';
+        const m = Math.floor(remaining / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+        timerValue.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      }
+    }
+  }
+</script>
+</body>
+</html>
